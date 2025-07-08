@@ -77,8 +77,38 @@ public class BinarySearchTree<T> {
      */
     public TreeNode<T> delete(TreeNode<T> root, T value) {
 
-        //TODO
+        // check if tree is empty or doesn't contain the value
+        if (!contains(root, value) || countLeaves(root) == 0) {
+            return root;
+        }
 
+        int cmp = comparator.compare(value, root.value);
+
+        if (cmp > 0) { // searched value is right
+            root.right = delete(root.right, value);
+        } else if (cmp < 0) { // searched value is left
+            root.left = delete(root.left, value);
+        } else { // value found
+            // if no child
+            if (root.left == null && root.right == null) {
+                return null;
+            }
+
+            // if 1 child
+            if (root.left == null) return root.right;
+            if (root.right == null) return root.left;
+
+            // if 2 children
+            // get smallest value in right subtree
+            TreeNode<T> successorNode = root.right;
+            while (successorNode.left != null) {
+                successorNode = successorNode.left; // always on the left (In-Order)
+            }
+            root.value = successorNode.value; // replace value
+
+            // delete leftovers
+            root.right = delete(root.right, successorNode.value);
+        }
         return root;
     }
 
