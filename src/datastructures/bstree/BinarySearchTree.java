@@ -199,16 +199,14 @@ public class BinarySearchTree<T> {
      * tree in case both root1 and root2 are empty.
      */
     public TreeNode<T> combineBSTs(TreeNode<T> root1, TreeNode<T> root2) {
+        if (root1 == null) return root2;
+        if (root2 == null) return root1;
 
-        //TODO
+        root1 = insert(root1, root2.value);
+        root1 = combineBSTs(root1, root2.left);
+        root1 = combineBSTs(root1, root2.right);
 
         return root1;
     }
-
-
-
-
-
-
 
 }
