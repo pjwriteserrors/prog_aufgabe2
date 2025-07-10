@@ -1,5 +1,7 @@
 package app;
 
+import java.util.List;
+
 import datastructures.bstree.BinarySearchTree;
 import datastructures.bstree.TreeNode;
 
@@ -25,18 +27,31 @@ public class Main {
             root = bst.insert(root, v);
         }
         int val = 25;
+        int min = 20;
+        int max = 50;
 
-        checks(bst, root, val);
+        List<Integer> r = bst.searchRange(root, min, max);
+        
+        checks(bst, root, val, r, min, max);
         root = bst.delete(root, val);
-        checks(bst, root, val);
+
+        r = bst.searchRange(root, min, max);
+        checks(bst, root, val, r, min, max);
+
+        
+        
+
     }
 
-    public static void checks(BinarySearchTree bst, TreeNode root, int val) {
+    public static void checks(BinarySearchTree bst, TreeNode root, int val, List<Integer> r, int min, int max) {
         System.out.print(ANSI_GREEN + "\nCHECKS:\n" + "----------------------------------" + ANSI_RESET + "\n"); // title
 
         System.out.print("InOrder\t\t: ");
         bst.inOrder(root);
         System.out.print("\nEnthält " + val + "?\t: " + bst.contains(root, val) + "\n");
-        System.out.print("Größe\t\t: " + bst.size(root) + "\n\n");
+        System.out.print("Größe\t\t: " + bst.size(root) + "\n");
+        System.out.println("Range " + min + " - " + max + "\t: " + r + "\n");
+        System.out.println("Min\t\t: " + bst.Max_Min(root, false) + "\nMax\t\t: " + bst.Max_Min(root, true));
+        
     }
 }

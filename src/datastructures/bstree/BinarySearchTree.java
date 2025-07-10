@@ -128,10 +128,27 @@ public class BinarySearchTree<T> {
      * or equal to min or equal to max.
      */
     public List<T> searchRange(TreeNode<T> node, T min, T max) {
+        List<T> result = new ArrayList<>();
+        searchRange(node, min, max, result);
+        return result;
+    }
 
-        //TODO
+    private void searchRange(TreeNode<T> n, T min, T max, List<T> result) {
+        if (n == null) {
+            return;
+        }
 
-        return null;
+        if (comparator.compare(n.value, min) > 0) {
+            searchRange(n.left, min, max, result);
+        }
+
+        if (comparator.compare(n.value, min) >= 0 && comparator.compare(n.value, max) <= 0) {
+            result.add(n.value);
+        }
+
+        if (comparator.compare(n.value, max) < 0) {
+            searchRange(n.right, min, max, result);
+        }
     }
 
 
@@ -150,10 +167,23 @@ public class BinarySearchTree<T> {
      * based on the value of isMin or null in case root is empty.
      */
     public T Max_Min(TreeNode<T> root, boolean isMin) {
+        if (root == null) {
+            return null;
+        }
+        
+        if (isMin == true) {
+            while (root.left != null) {
+                root = root.left;
+            }
 
-        //TODO
+            return root.value;
+        } else {
+            while (root.right != null) {
+                root = root.right;
+            }
 
-        return null;
+            return root.value;
+        }
     }
 
     /**
