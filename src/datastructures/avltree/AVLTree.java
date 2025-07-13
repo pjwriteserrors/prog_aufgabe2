@@ -1,6 +1,9 @@
 package datastructures.avltree;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+
 import datastructures.bstree.BinarySearchTree;
 import datastructures.bstree.TreeNode;
 
@@ -86,11 +89,40 @@ public class AVLTree<T> extends BinarySearchTree<T>{
      * @param value  the value to delete, if present. If not present, do nothing.
      * @return       the produced AVL Tree. Identical with input if value not present.
      */
+    @Override
     public TreeNode<T> delete(TreeNode<T> root, T value) {
 
-    	// TODO
+    	if(root == null){
+            return root;
+        }
+        if(!contains(root, value)){
+            return root;
+        }
+        
+        int cmp = super.getComparator().compare(value, root.value);
 
-        return root; // dummy return, replace in your solution!
+        if(cmp < 0){
+            root.left = delete(root.left, value);
+        }
+        else if(cmp > 0){
+            root.right = delete(root.right, value);
+        }
+        else{
+            if (root.left == null) {
+                return root.right;
+            }
+            else if (root.right == null) {
+                return root.left;
+            }
+            TreeNode<T> successor = root.right;
+            while (successor.left != null) {
+                successor = successor.left;
+            }
+            root.value = successor.value;
+            root.right = delete(root.right, successor.value);
+
+        }
+        return balance(root);
     }
 
 
@@ -106,10 +138,26 @@ public class AVLTree<T> extends BinarySearchTree<T>{
      * @return     The Median value of all values in the AVL Tree, in Double
      */
     public <T extends Number>Double findMedian(TreeNode<T> node) {
-
-//    	TODO
-
-    	return 0.0;  // dummy return, replace in your solution!
+        List<T> values = new ArrayList<>();
+        inOrderTraversal(node, values);
+        if (values.isEmpty()) {
+            return 0.0;
+        }
+        int size = values.size();
+        if (size % 2 == 1) {
+            return values.get(size / 2 ).doubleValue();
+        }
+        else{
+            return (values.get(size / 2-1).doubleValue() + values.get(size / 2).doubleValue()) / 2.0;
+        }
+    }
+    private <T extends Number> void inOrderTraversal(TreeNode<T> node, List<T> values){
+        if (node == null) {
+            return;
+        }
+        inOrderTraversal(node.left, values);
+        values.add(node.value);
+        inOrderTraversal(node.right, values);
     }
 
     /**
@@ -123,10 +171,22 @@ public class AVLTree<T> extends BinarySearchTree<T>{
      * @return     The average value of all values in the AVL Tree, in Double
      */
     public <T extends Number>Double findAVG(TreeNode<T> node) {
-
-//    	TODO
-
-    	return 0.0;  	  // dummy return, replace in your solution!
+        SumCount sc = new SumCount();
+        sumAndCount(node, sc);
+        return sc.count == 0 ? 0.0 : sc.sum / sc.count;
+    }
+    private class SumCount {
+        double sum = 0.0;
+        int count = 0;
+    }
+    private <T extends Number> void sumAndCount(TreeNode<T> node, SumCount sc){
+        if (node == null) {
+            return;
+        }
+        sumAndCount(node.left, sc);
+        sc.sum += node.value.doubleValue();
+        sc.count++;
+        sumAndCount(node.right, sc);
     }
 
 
@@ -143,13 +203,24 @@ public class AVLTree<T> extends BinarySearchTree<T>{
      * @return The root of the merged AVL tree.
      */
     public TreeNode<T> merge(TreeNode<T> tree1, TreeNode<T> tree2) {
+      if (tree1 == null) {
+        return tree2;
+      }
+      if (tree2 == null) {
+        return tree1;
+      }
 
+      TreeNode<T> minNode = tree2;
+      while (minNode.left != null) {
+        minNode = minNode.left;
+      }
+      tree2 = delete(tree2, minNode.value);
+      TreeNode<T> newRoot = new TreeNode<>(minNode.value);
+      newRoot.left = tree1;
+      newRoot.right = tree2;
 
-//    TODO
-
-    	return  tree1; // dummy return, replace in your solution!
+      return balance(newRoot);
     }
-
 
     /**
      * Splits an AVL tree into two subtrees based on a given value.
@@ -166,11 +237,26 @@ public class AVLTree<T> extends BinarySearchTree<T>{
      * If 'value' exists in the tree, it is NOT included in either subtree.
      */
     public TreeNode<T>[] split(TreeNode<T> root, T value) {
-
-//    	TODO
-
-
-    	return null; // dummy return, replace in your solution!
+        if (root == null) {
+            return new TreeNode[]{null, null};    
+        }
+        int cmp = super.getComparator().compare(value, root.value);
+        
+        if (cmp < 0) {
+            TreeNode<T>[] leftSplit = split(root.left, value);
+            root.left = leftSplit[1];
+            TreeNode<T> balancedRigth = balance(root);
+            return new TreeNode[]{leftSplit[0], balancedRigth};
+        }
+        else if (cmp > 0) {
+            TreeNode<T>[] rightSplit = split(root.right, value);
+            root.right = rightSplit[0];
+            TreeNode<T> balancedLeft = balance(root);
+            return new TreeNode[]{balancedLeft, rightSplit[0]}; 
+        }
+        else{
+            return new TreeNode[]{root.left, root.right};
+        }
     }
 
 
