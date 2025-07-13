@@ -128,10 +128,19 @@ public class BinarySearchTree<T> {
      * or equal to min or equal to max.
      */
     public List<T> searchRange(TreeNode<T> node, T min, T max) {
-
-        //TODO
-
-        return null;
+        List<T> result = new ArrayList<>();
+        searchRangeHelper(node, min, max, result);
+        return result;
+    }
+    // helper Method for recursion
+    private void searchRangeHelper(TreeNode<T> node, T min, T max, List<T> result){
+        if( node == null){
+            return;
+        }
+        // min < node.value means that there still could be values on the left
+        if(comparator.compare(node.value, min) > 0){
+            searchRangeHelper(node.left, min, max, result);
+        } 
     }
 
 
