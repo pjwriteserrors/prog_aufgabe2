@@ -129,18 +129,26 @@ public class BinarySearchTree<T> {
      */
     public List<T> searchRange(TreeNode<T> node, T min, T max) {
         List<T> result = new ArrayList<>();
-        searchRangeHelper(node, min, max, result);
+        searchRange(node, min, max, result);
         return result;
     }
-    // helper Method for recursion
-    private void searchRangeHelper(TreeNode<T> node, T min, T max, List<T> result){
-        if( node == null){
+
+    private void searchRange(TreeNode<T> n, T min, T max, List<T> result) {
+        if (n == null) {
             return;
         }
-        // min < node.value means that there still could be values on the left
-        if(comparator.compare(node.value, min) > 0){
-            searchRangeHelper(node.left, min, max, result);
-        } 
+
+        if (comparator.compare(n.value, min) > 0) {
+            searchRange(n.left, min, max, result);
+        }
+
+        if (comparator.compare(n.value, min) >= 0 && comparator.compare(n.value, max) <= 0) {
+            result.add(n.value);
+        }
+
+        if (comparator.compare(n.value, max) < 0) {
+            searchRange(n.right, min, max, result);
+        }
     }
 
 
@@ -159,10 +167,23 @@ public class BinarySearchTree<T> {
      * based on the value of isMin or null in case root is empty.
      */
     public T Max_Min(TreeNode<T> root, boolean isMin) {
+        if (root == null) {
+            return null;
+        }
+        
+        if (isMin == true) {
+            while (root.left != null) {
+                root = root.left;
+            }
 
-        //TODO
+            return root.value;
+        } else {
+            while (root.right != null) {
+                root = root.right;
+            }
 
-        return null;
+            return root.value;
+        }
     }
 
     /**
@@ -178,16 +199,14 @@ public class BinarySearchTree<T> {
      * tree in case both root1 and root2 are empty.
      */
     public TreeNode<T> combineBSTs(TreeNode<T> root1, TreeNode<T> root2) {
+        if (root1 == null) return root2;
+        if (root2 == null) return root1;
 
-        //TODO
+        root1 = insert(root1, root2.value);
+        root1 = combineBSTs(root1, root2.left);
+        root1 = combineBSTs(root1, root2.right);
 
         return root1;
     }
-
-
-
-
-
-
 
 }
