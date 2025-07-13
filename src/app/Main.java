@@ -1,65 +1,54 @@
 package app;
 
-import java.util.List;
-
-import datastructures.bstree.BinarySearchTree;
+import datastructures.avltree.AVLTree;
 import datastructures.bstree.TreeNode;
 
-public class Main {
-    //? ignore
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+import java.util.Arrays;
+import java.util.Comparator;
 
+public class Main {
     public static void main(String[] args) {
-        // make bst
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>(Integer::compareTo);
+        AVLTree<Integer> tree = new AVLTree<Integer>(Comparator.naturalOrder());
         TreeNode<Integer> root = null;
 
-        int[] initial = {40, 25, 60, 20, 30, 50, 70};
-        for (int v : initial) {
-            root = bst.insert(root, v);
+        // Test: Insertion
+        int[] values = {10, 20, 30, 5, 15, 25, 35};
+        for (int val : values) {
+            root = tree.insert(root, val);
         }
-        
+        System.out.println("Inserted values: " + Arrays.toString(values));
+        System.out.println("Is AVL Tree? " + tree.isAVLtree(root));
+
+        // Test: Deletion
+        root = tree.delete(root, 20);
+        System.out.println("Deleted 20");
+        System.out.println("Is AVL Tree? " + tree.isAVLtree(root));
+
+        // Test: Median
+        Double median = tree.findMedian(root);
+        System.out.println("Median: " + median);
+
+        // Test: Average
+        Double average = tree.findAVG(root);
+        System.out.println("Average: " + average);
+
+        // Test: Merge
+        AVLTree<Integer> tree2 = new AVLTree<Integer>(Comparator.naturalOrder());
         TreeNode<Integer> root2 = null;
-        int[] initial2 = {32, 56, 7, 2, 4, 567, 1};
-        for (int v : initial2) {
-            root2 = bst.insert(root2, v);
+        for (int val : new int[]{40, 45, 50}) {
+            root2 = tree2.insert(root2, val);
         }
+        TreeNode<Integer> merged = tree.merge(root, root2);
+        System.out.println("Merged trees");
+        System.out.println("Is AVL Tree after merge? " + tree.isAVLtree(merged));
 
-        int val = 25;
-        int min = 20;
-        int max = 50;
-        TreeNode<Integer> merged = null;
+        // Test: Split
+        TreeNode<Integer>[] split = tree.split(merged, 30);
+        System.out.println("Split tree by 30");
+        System.out.println("Left tree (values < 30) is AVL? " + tree.isAVLtree(split[0]));
+        System.out.println("Right tree (values > 30) is AVL? " + tree.isAVLtree(split[1]));
 
-        List<Integer> r = bst.searchRange(root, min, max);
-        
-        r = bst.searchRange(root, min, max);
-        checks(bst, root, root2, val, r, min, max, merged);
-
-        root = bst.delete(root, val);
-        checks(bst, root, root2, val, r, min, max, merged);
-
-
-        merged = bst.combineBSTs(root, root2);
-        checks(bst, root, root2, val, r, min, max, merged);
-
-    }
-
-    public static void checks(BinarySearchTree bst, TreeNode root, TreeNode<Integer> root2, int val, List<Integer> r, int min, int max, TreeNode<Integer> merged) {
-        System.out.print(ANSI_GREEN + "\nCHECKS:\n" + "----------------------------------" + ANSI_RESET + "\n"); // title
-
-        System.out.print("InOrder merged\t: ");
-        bst.inOrder(root);
-        System.out.println("\nEnthält " + val + "?\t: " + bst.contains(root, val) );
-        System.out.println("Größe\t\t: " + bst.size(root));
-        System.out.println("Range " + min + " - " + max + "\t: " + r);
-        System.out.println("Min\t\t: " + bst.Max_Min(root, true) + "\nMax\t\t: " + bst.Max_Min(root, false));
+        System.out.println("Left tree median: " + tree.findMedian(split[0]));
+        System.out.println("Right tree median: " + tree.findMedian(split[1]));
     }
 }
